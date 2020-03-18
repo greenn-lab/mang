@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <title>mang</title>
+</head>
+<body>
+<h1>Hello, mang!</h1>
+
+<div class="mang"></div>
+
+<script src="./mang.js"></script>
+<script>
+    const manggo =
+        new Mang('.mang')
+            .column('name').width(123).format(Mang.format.TEXT).and()
+            .column('age').width(80).format(Mang.format.TEXT).and()
+            .frozen(2)
+            .multiple()
+            .editable()
+
+
+</script>
+</body>
+</html>
