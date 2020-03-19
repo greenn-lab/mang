@@ -1,5 +1,8 @@
+import Mang from './definitions'
+
 [].forEach.call(
   document.querySelectorAll('.mang'),
-  function (el) {
-
-  })
+  (el) => {
+    Mang('test')
+  }
+)
