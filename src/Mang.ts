@@ -41,4 +41,3 @@ class Mang {
 }
 
 export default Mang
-window.Mang = Mang

@@ -1,5 +1,3 @@
-const path = require('path')
-
 module.exports = {
   mode: 'development',
   entry: './src/Mang.ts',
@@ -15,13 +13,23 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   devServer: {
     hot: true,
     port: 3000
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: `${__dirname}/dist`,
     filename: 'mang.js'
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      (compiler) => {
+        // eslint-disable-next-line global-require
+        const TerserPlugin = require('terser-webpack-plugin')
+        new TerserPlugin({ /* your config */ }).apply(compiler)
+      }
+    ]
   }
 }
