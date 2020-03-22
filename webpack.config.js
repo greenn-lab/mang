@@ -1,6 +1,8 @@
+const path = require('path')
+
 module.exports = {
   mode: 'development',
-  entry: './src/index.ts',
+  entry: './src/Mang.ts',
   module: {
     rules: [
       {
@@ -11,14 +13,15 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
   },
   devtool: 'inline-source-map',
   devServer: {
     hot: true,
-    index: 'index.html'
+    port: 3000
   },
   output: {
+    path: path.resolve(__dirname, 'dist'),
     filename: 'mang.js'
   }
 }

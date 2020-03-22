@@ -2,7 +2,8 @@
   "env": {
     "node": true,
     "browser": true,
-    "jest": true
+    "jest": true,
+    "es6": true
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -13,17 +14,11 @@
     "@typescript-eslint"
   ],
   "extends": [
-    "airbnb-base"
+    "airbnb-base",
+    "eslint:recommended"
   ],
   "rules": {
-    "semi": [
-      "off",
-      "never"
-    ],
-    "quotes": [
-      "warn",
-      "single"
-    ],
+    "comma-dangle": "off",
     "indent": [
       "error",
       2,
@@ -31,10 +26,24 @@
         "SwitchCase": 1
       }
     ],
-    "comma-dangle": "off",
-    "no-unused-vars": "warn",
     "no-plusplus": "off",
     "no-param-reassign": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used"
+      }
+    ],
+    "object-curly-newline": "off",
+    "quotes": [
+      "warn",
+      "single"
+    ],
+    "semi": [
+      "warn",
+      "never"
+    ],
     "@typescript-eslint/indent": [
       "warn",
       2
