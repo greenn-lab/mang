@@ -1,13 +1,18 @@
+import Mang from './Mang'
+
 class Column {
-  readonly component: Grid
+  readonly component: Mang | undefined
 
-  readonly attribute: GridColumnAttribute
+  readonly attribute: CellAttribute
 
-  constructor(component: Grid, name: string, type: Type = 'TEXT') {
+  readonly columns: Column[] = []
+
+  constructor(name: string, label?: string, component?: Mang) {
     this.component = component
     this.attribute = {
       name,
-      type
+      label: label || name,
+      type: 'TEXT'
     }
   }
 
@@ -16,15 +21,47 @@ class Column {
     return this
   }
 
-  type(type: Type): Column {
+  type(type: Type, format?: Surface): Column {
     this.attribute.type = type
+    this.attribute.surface = format
     return this
   }
 
-  column(name: String, type?: Type): Column {
-    this.component.column(name, type)
+  surface(surface: Surface): Column {
+    this.attribute.surface = surface
+    return this
+  }
+
+  editable(editable: boolean = true): Column {
+    this.attribute.editable = editable
+    return this
+  }
+
+  align(align: Align = 'LEFT'): Column {
+    this.attribute.align = align
+    return this
+  }
+
+  merge(rows: number = 1, cols: number = 1) {
+    this.attribute.merge = { rows, cols }
+    return this
+  }
+
+  children(...columns: Column[]): Column {
+    this.columns.concat(columns)
+    return this
+  }
+
+  column(name: string, label?: string): Column {
+    if (this.component) {
+      this.component.column(name, label)
+    }
 
     return this
+  }
+
+  mang(): Mang | undefined {
+    return this.component
   }
 }
 

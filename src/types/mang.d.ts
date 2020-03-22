@@ -6,19 +6,9 @@ declare global {
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export interface Grid {
-    size(width: number, height?: number): void
+  export type Surface = Align | Function | string | undefined
 
-    column(name: String, type?: Type): GridColumn
-  }
-
-  export interface GridColumn {
-    width(width: number): GridColumn
-
-    type(type: Type): GridColumn
-
-    column(name: String): GridColumn
-  }
+  export type selector = string | Element | Document
 
   export interface GridElement {
     root: HTMLElement,
@@ -26,15 +16,32 @@ declare global {
     main: HTMLElement
   }
 
-  export interface GridSize {
+
+  export interface Shape {
     width?: number
     height?: number
+    frozen?: number
   }
 
-  export interface GridColumnAttribute {
-    name: string
+  export interface Pagination {
+    selector?: selector
+    size?: number
+    range?: number
+  }
+
+  export interface CellMerge {
+    rows: number
+    cols: number
+  }
+
+  export interface CellAttribute {
+    name: string,
+    label?: string,
     type: Type
+    surface?: Surface
+    editable?: boolean;
     align?: Align
     width?: number
+    merge?: CellMerge
   }
 }

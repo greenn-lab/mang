@@ -2,6 +2,6 @@ export {}
 
 declare global {
   interface Window {
-    Mang: any
+    Mang: Function
   }
 }

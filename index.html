@@ -10,10 +10,22 @@
 
 <script src="mang.js"></script>
 <script>
-    new Mang('mango')
+    new Mang('#mango')
         .size(500)
-        .column('name').type('TEXT')
-        .column('age').type('NUMBER').width(300)
+        .paginate(document)
+        .column('name').type('TEXT').children(
+          Mang.child('firstName', 'first name').align('CENTER'),
+          Mang.child('lastName', 'last name').align('LEFT'),
+          Mang.child('fullName', 'full name').children(
+            Mang.child('fullName', 'first middle last name').align('RIGHT')
+          )
+        )
+        .column('age').type('NUMBER',
+          v => v < 10 ? 'baby' : v < 30 ? 'young' : 'elder').width(300)
+        .column('gender').type('TEXT').width(30)
+        .column('birth', 'birthday').type('DATE', 'dd. MMM.').width(70)
+        .column('salary').type('NUMBER', '#,##0').width(300).editable()
+        .column('hired').type('DATE', 'yyyy-MM-dd').editable()
 </script>
 </body>
 </html>
