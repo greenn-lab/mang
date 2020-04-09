@@ -1,33 +1,40 @@
 import Column from './Column'
+import { initialize } from './rendering'
 
 class Mang {
+  public static ids: string[] = []
+
+  private readonly uid: string
+
   private readonly element: GridElement
 
-  private readonly shape: Shape = {}
+  private shape: Shape = {}
 
-  private readonly pagination: Pagination = {}
+  private pagination: Pagination = {}
 
-  private readonly columns: Column[] = []
+  private _columns: Column[] = []
+
+  private _data: any[] = []
 
   constructor(id: string) {
-    const root = document.querySelector(id) as HTMLElement
-
-    if (root == null) {
-      throw new Error(`#${id} must be exists.`)
-    }
+    this.uid = [
+      id.replace(/[^\w]/g, ''),
+      Date.now().toString(36)
+    ].join('-')
 
     this.element = {
-      root,
-      header: document.createElement('header'),
-      main: document.createElement('main')
+      root: document.querySelector(id) as HTMLElement
     }
 
-    root.appendChild(this.element.header)
-    root.appendChild(this.element.main)
+    if (this.element.root == null) {
+      throw new Error(`#${id} must be exists.`)
+    }
   }
 
-  static child(name: string, label?: string) {
-    return new Column(name, label)
+  render(data: any[] = []): void {
+    this._data = data
+
+    initialize(this.uid, this.element, this._columns)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {
@@ -37,10 +44,13 @@ class Mang {
     return this
   }
 
-  column(name: string, label?: string): Column {
-    const column = new Column(name, label, this)
-    this.columns.push(column)
-    return column
+  columns(...columns: Column[]): Mang {
+    this._columns = columns
+    return this
+  }
+
+  public static column(name: string, label?: string): Column {
+    return new Column(name, label)
   }
 
   paginate(selector: selector, size: number = 20, range: number = 5): Mang {

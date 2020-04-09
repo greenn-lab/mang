@@ -1,19 +1,19 @@
 export {}
 
 declare global {
-
   export type Type = 'TEXT' | 'NUMBER' | 'DATE'
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export type Surface = Align | Function | string | undefined
+  export type Surface = (value: any, row: any) => {} | string | undefined
 
   export type selector = string | Element | Document
 
   export interface GridElement {
-    root: HTMLElement,
-    header: HTMLElement,
-    main: HTMLElement
+    root: HTMLElement
+    css?: CSSStyleSheet
+    head?: HTMLElement
+    body?: HTMLElement
   }
 
 
@@ -21,6 +21,10 @@ declare global {
     width?: number
     height?: number
     frozen?: number
+    header?: {
+      rows: number
+      cols: number
+    }
   }
 
   export interface Pagination {
@@ -34,12 +38,12 @@ declare global {
     cols: number
   }
 
-  export interface CellAttribute {
-    name: string,
-    label?: string,
+  export interface ColumnAttribute {
+    name: string
     type: Type
+    label?: string
     surface?: Surface
-    editable?: boolean;
+    editable?: boolean
     align?: Align
     width?: number
     merge?: CellMerge

@@ -1,19 +1,22 @@
-import Mang from './Mang'
-
 class Column {
-  readonly component: Mang | undefined
+  private readonly _attribute: ColumnAttribute
 
-  readonly attribute: CellAttribute
+  private _columns: Column[] = []
 
-  readonly columns: Column[] = []
-
-  constructor(name: string, label?: string, component?: Mang) {
-    this.component = component
-    this.attribute = {
+  constructor(name: string, label?: string) {
+    this._attribute = {
       name,
       label: label || name,
       type: 'TEXT'
     }
+  }
+
+  get attribute() {
+    return this._attribute
+  }
+
+  get columns() {
+    return this._columns
   }
 
   width(width: number): Column {
@@ -48,20 +51,9 @@ class Column {
   }
 
   children(...columns: Column[]): Column {
-    this.columns.concat(columns)
-    return this
-  }
-
-  column(name: string, label?: string): Column {
-    if (this.component) {
-      this.component.column(name, label)
-    }
+    this._columns = columns
 
     return this
-  }
-
-  mang(): Mang | undefined {
-    return this.component
   }
 }
 
