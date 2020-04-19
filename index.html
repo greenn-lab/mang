@@ -2,6 +2,29 @@
 <html>
 <head>
   <title>mang</title>
+  <style>
+    .mang__root {
+      background-color: rgba(0,0,0,0.03);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10' fill='red'%3E%3Cline x1='11' y1='-1' x2='-1' y2='11' style='stroke:rgba(0,0,0,0.07);stroke-width:1'/%3E%3C/svg%3E");
+      box-sizing: border-box;
+      overflow: hidden;
+      padding: 5px;
+    }
+
+    .mang__head-column {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Crect width='1024' height='1024' fill='transparent' stroke='%23777' stroke-width='1' /%3E%3C/svg%3E ");
+      box-sizing: border-box;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .mang__head-column > span {
+      display: inline-block;
+      padding: 0 7px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
 <h1>Hello, mang!</h1>
@@ -19,21 +42,30 @@
     new Mang('#mango')
         .size(500)
         .paginate('#mango-page')
-        .columns(
-          Mang.column('name').type('TEXT').children(
-            Mang.column('firstName', 'first name').align('CENTER'),
-            Mang.column('lastName', 'last name').align('LEFT'),
-            Mang.column('fullName', 'full name').children(
-              Mang.column('fullName', 'first middle last name').align('RIGHT')
-            )
-          ),
-          Mang.column('age').type('NUMBER',
-              v => v < 10 ? 'baby' : v < 30 ? 'young' : 'elder').width(300),
-          Mang.column('gender').type('TEXT' ).width(30),
-          Mang.column('birth', 'birthday').type('DATE', 'dd. MMM.').width(70),
-          Mang.column('salary').type('NUMBER', '#,##0').width(300).editable(),
-          Mang.column('hired').type('DATE', 'yyyy-MM-dd').editable()
-        )
+        .setColumns([
+            {id: 'no', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
+            {
+                id: 'name', type: 'TEXT', children: [
+                    {
+                        id: 'firstAndMiddleName', children: [
+                            {id: 'firstName', label: 'First Name', align: 'RIGHT', width: 120},
+                            {id: 'middleName', label: 'Middle Name', align: 'CENTER', width: 90}
+                        ]
+                    },
+                    {id: 'lastName', label: 'Last Name', align: 'LEFT', width: 130}
+                ]
+            },
+            {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
+            {id: 'birthday', type: 'DATE', pattern: 'dd. MMM.', width: 70},
+            {
+                id: 'work', children: [
+                    {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
+                    {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 300}
+                ]
+            },
+            {id: 'height', type: 'NUMBER', pattern: '( 0.# kg )'},
+            {id: 'tall', type: 'NUMBER', pattern: ' 0.0# m '}
+        ])
         .render()
 </script>
 </body>

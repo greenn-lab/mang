@@ -1,73 +1,81 @@
-import Column from './Column'
+const generateHeaderMatrix = (matrix: Column[][], columns: Column[], columnIndex: number = 0, rowIndex: number = 0): number => {
+  columns.forEach(column => {
+    if (!matrix[rowIndex]) {
+      matrix[rowIndex] = []
+    }
 
-const createCss = (uid: string, columns: Column[]) => {
-  const css = document.createElement('style')
-  css.id = uid
+    matrix[rowIndex][columnIndex] = column
 
-  if (document.head) {
-    document.head.append(css)
-  } else {
-    document.documentElement.append(css)
-  }
-
-  const sheet = css.sheet as CSSStyleSheet
-
-  columns.forEach((column, index) => {
-    const { align, type, width } = column.attribute
-    const styles = [
-      `text-align: ${(align || (type === 'NUMBER' ? 'RIGHT' : 'LEFT')).toLowerCase()}`,
-      `width: ${width}px`
-    ]
-
-    sheet.insertRule(`.${uid}__col${index} {${styles.join(';')}}`, index)
+    if (column.children && column.children.length > 0) {
+      columnIndex = generateHeaderMatrix(matrix, column.children, columnIndex, rowIndex + 1)
+    } else {
+      columnIndex++
+    }
   })
 
-  return sheet
+  return columnIndex
 }
 
-let rows = 1
+const drawHeader = (uid: string, element: GridElement, columns: Column[]): void => {
+  const colgroup = document.createElement('colgroup')
+  element.head.append(colgroup)
 
-let cols = 0
+  const matrix: Column[][] = []
+  const maxColumnIndex = generateHeaderMatrix(matrix, columns)
 
-const _columns: Column[] = []
+  for (let columnIndex = 0; columnIndex < maxColumnIndex; columnIndex++) {
+    colgroup.append(document.createElement('col'))
+  }
 
-const drawHeader = (head: HTMLElement, columns: Column[], uid: string, depth: number = 1): void => {
-  columns.forEach(column => {
-    const { label, name } = column.attribute
-    const div = document.createElement('div')
+  matrix.forEach((row, rowIndex) => {
+    const tr = document.createElement('tr')
+    element.head.append(tr)
 
-    div.classList.add('mang__head-column')
-    div.append(document.createTextNode(label || name))
-    head.append(div)
+    for (let columnIndex = 0; columnIndex < maxColumnIndex; columnIndex++) {
+      if (matrix[rowIndex][columnIndex]) {
+        const th = document.createElement('th')
+        th.textContent = matrix[rowIndex][columnIndex].label || matrix[rowIndex][columnIndex].id
+        tr.append(th)
 
-    if (column.columns.length) {
-      depth++
+        let i = 1
+        while (matrix[rowIndex + i] && !matrix[rowIndex + i][columnIndex]) i++
 
-      if (rows < depth) {
-        rows = depth
+        if (i > 1) {
+          th.setAttribute('rowspan', String(i))
+        }
+
+        i = 1
+        while (!matrix[rowIndex][columnIndex + i] && columnIndex + i < maxColumnIndex) i++
+
+        if (i > 1) {
+          console.log(matrix[rowIndex])
+          th.setAttribute('colspan', String(i))
+          columnIndex += i
+        }
       }
-
-      drawHeader(div, column.columns, uid, depth)
-    } else {
-      div.classList.add(`${uid}__col${cols}`)
-      cols++
-
-      _columns.push(column)
     }
   })
 }
 
 export const initialize = (uid: string, element: GridElement, columns: Column[]): void => {
   element.root.classList.add('mang', 'mang__root', uid)
-  element.css = createCss(uid, columns)
 
-  element.head = document.createElement('header')
+  const header = document.createElement('header')
+  header.append(element.head)
   element.head.classList.add('mang__head')
-  element.root.appendChild(element.head)
+  element.root.append(header)
 
-  element.body = document.createElement('main')
+  const main = document.createElement('main')
+  main.append(element.body)
   element.body.classList.add('mang__body')
-  element.root.appendChild(element.body)
+  element.root.append(main)
 
-  drawHeader(element.head, columns, uid)
+  drawHeader(uid, element, columns)
+
+  element.head.querySelectorAll('.mang__head-column[data-column]')
+    .forEach((column) => {
+      column.addEventListener('click', () => {
+        const columnIndex = Number(column.getAttribute('data-column'))
+      })
+    })
 }

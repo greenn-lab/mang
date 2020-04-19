@@ -1,4 +1,3 @@
-import Column from './Column'
 import { initialize } from './rendering'
 
 class Mang {
@@ -10,11 +9,11 @@ class Mang {
 
   private shape: Shape = {}
 
-  private pagination: Pagination = {}
+  private pagination: Pagination | undefined
 
-  private _columns: Column[] = []
+  private columns: Column[] = []
 
-  private _data: any[] = []
+  private data: any[] = []
 
   constructor(id: string) {
     this.uid = [
@@ -22,8 +21,15 @@ class Mang {
       Date.now().toString(36)
     ].join('-')
 
+    const style = document.createElement('style')
+    style.id = `mang__style-${this.uid}`
+    document.head.append(style)
+
     this.element = {
-      root: document.querySelector(id) as HTMLElement
+      root: document.querySelector(id) as HTMLElement,
+      style: style.sheet as CSSStyleSheet,
+      head: document.createElement('table'),
+      body: document.createElement('table')
     }
 
     if (this.element.root == null) {
@@ -32,9 +38,9 @@ class Mang {
   }
 
   render(data: any[] = []): void {
-    this._data = data
+    this.data = data
 
-    initialize(this.uid, this.element, this._columns)
+    initialize(this.uid, this.element, this.columns)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {
@@ -44,19 +50,18 @@ class Mang {
     return this
   }
 
-  columns(...columns: Column[]): Mang {
-    this._columns = columns
+  setColumns(columns: Column[]): Mang {
+    this.columns = columns
     return this
   }
 
-  public static column(name: string, label?: string): Column {
-    return new Column(name, label)
-  }
-
-  paginate(selector: selector, size: number = 20, range: number = 5): Mang {
-    this.pagination.selector = selector
-    this.pagination.size = size
-    this.pagination.range = range
+  paginate(element: Element, size: number = 20, range: number = 5): Mang {
+    this.pagination = {
+      element,
+      page: 1,
+      size,
+      range
+    }
     return this
   }
 
