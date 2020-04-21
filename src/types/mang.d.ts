@@ -28,8 +28,8 @@ declare global {
   export interface GridElement {
     root: HTMLElement
     style: CSSStyleSheet
-    head: HTMLElement
-    body: HTMLElement
+    head: HTMLTableElement
+    body: HTMLTableElement
   }
 
 

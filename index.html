@@ -11,19 +11,21 @@
       padding: 5px;
     }
 
-    .mang__head-column {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Crect width='1024' height='1024' fill='transparent' stroke='%23777' stroke-width='1' /%3E%3C/svg%3E ");
-      box-sizing: border-box;
-      display: table-cell;
-      vertical-align: middle;
+    .mang__root table {
+      table-layout: fixed;
+      border-collapse: collapse;
+      border-color: silver;
+      border-spacing: 0;
+      border-style: solid;
+      border-width: 0 1px 1px 0;
     }
 
-    .mang__head-column > span {
-      display: inline-block;
-      padding: 0 7px;
+    .mang__root th,
+    .mang__root td {
+      background-color: white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Crect width='1024' height='1024' fill='transparent' stroke='%23777' stroke-width='1' /%3E%3C/svg%3E ");
+      box-sizing: border-box;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
   </style>
 </head>
@@ -61,7 +63,7 @@
             {
                 id: 'work', children: [
                     {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
-                    {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 300}
+                    {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150}
                 ]
             },
             {

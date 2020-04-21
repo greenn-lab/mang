@@ -1,4 +1,4 @@
-import { initialize } from './rendering'
+import { initialize } from './render/intialize'
 
 class Mang {
   public static ids: string[] = []

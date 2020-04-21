@@ -44,16 +44,8 @@ const headerMatrix = (columns: Column[]): Column[][] => {
   return matrix
 }
 
-const drawHeader = (uid: string, element: GridElement, columns: Column[]): void => {
-  const colgroup = document.createElement('colgroup')
-  element.head.append(colgroup)
-
+export default (uid: string, element: GridElement, columns: Column[]): Column[] => {
   const matrix: Column[][] = headerMatrix(columns)
-  const maxColumnIndex = matrix[0].length
-
-  for (let columnIndex = 0; columnIndex < maxColumnIndex; columnIndex++) {
-    colgroup.append(document.createElement('col'))
-  }
 
   matrix.forEach(row => {
     const tr = document.createElement('tr')
@@ -76,27 +68,6 @@ const drawHeader = (uid: string, element: GridElement, columns: Column[]): void 
         tr.append(th)
       })
   })
-}
 
-export const initialize = (uid: string, element: GridElement, columns: Column[]): void => {
-  element.root.classList.add('mang', 'mang__root', uid)
-
-  const header = document.createElement('header')
-  header.append(element.head)
-  element.head.classList.add('mang__head')
-  element.root.append(header)
-
-  const main = document.createElement('main')
-  main.append(element.body)
-  element.body.classList.add('mang__body')
-  element.root.append(main)
-
-  drawHeader(uid, element, columns)
-
-  element.head.querySelectorAll('.mang__head-column[data-column]')
-    .forEach((column) => {
-      column.addEventListener('click', () => {
-        const columnIndex = Number(column.getAttribute('data-column'))
-      })
-    })
+  return matrix[matrix.length - 1]
 }
