@@ -25,18 +25,21 @@ const headerMatrix = (columns: Column[]): Column[][] => {
     for (let col = 0; col < columnLength; col++) {
       let index = 1
       while (row + index < rowLength && !matrix[row + index][col]) {
-        matrix[row + index][col] = matrix[row][col]
-        index++
+        matrix[row + index][col] = { mocker: true, ...matrix[row][col] }
+        matrix[row][col].rowspan = ++index
       }
 
-      while (col + 1 < columnLength && !matrix[row][col + 1]) {
-        matrix[row][col + 1] = matrix[row][col]
-        col++
+      index = 1
+      while (col + index < columnLength && !matrix[row][col + index]) {
+        matrix[row][col + index] = { mocker: true, ...matrix[row][col] }
+        matrix[row][col].colspan = ++index
+      }
+
+      if (index > 1) {
+        col += index - 1
       }
     }
   }
-
-  console.log(matrix)
 
   return matrix
 }
@@ -56,11 +59,22 @@ const drawHeader = (uid: string, element: GridElement, columns: Column[]): void 
     const tr = document.createElement('tr')
     element.head.append(tr)
 
-    row.forEach(col => {
-      const th = document.createElement('th')
-      th.textContent = col.label || col.id
-      tr.append(th)
-    })
+    row
+      .filter(col => !col.mocker)
+      .forEach(col => {
+        const th = document.createElement('th')
+        th.textContent = col.label || col.id
+
+        if (col.rowspan) {
+          th.rowSpan = col.rowspan
+        }
+
+        if (col.colspan) {
+          th.colSpan = col.colspan
+        }
+
+        tr.append(th)
+      })
   })
 }
 
