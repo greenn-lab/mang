@@ -16,44 +16,51 @@ const generateHeaderMatrix = (matrix: Column[][], columns: Column[], columnIndex
   return columnIndex
 }
 
+const headerMatrix = (columns: Column[]): Column[][] => {
+  const matrix: Column[][] = []
+  const columnLength = generateHeaderMatrix(matrix, columns)
+  const rowLength = matrix.length
+
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < columnLength; col++) {
+      let index = 1
+      while (row + index < rowLength && !matrix[row + index][col]) {
+        matrix[row + index][col] = matrix[row][col]
+        index++
+      }
+
+      while (col + 1 < columnLength && !matrix[row][col + 1]) {
+        matrix[row][col + 1] = matrix[row][col]
+        col++
+      }
+    }
+  }
+
+  console.log(matrix)
+
+  return matrix
+}
+
 const drawHeader = (uid: string, element: GridElement, columns: Column[]): void => {
   const colgroup = document.createElement('colgroup')
   element.head.append(colgroup)
 
-  const matrix: Column[][] = []
-  const maxColumnIndex = generateHeaderMatrix(matrix, columns)
+  const matrix: Column[][] = headerMatrix(columns)
+  const maxColumnIndex = matrix[0].length
 
   for (let columnIndex = 0; columnIndex < maxColumnIndex; columnIndex++) {
     colgroup.append(document.createElement('col'))
   }
 
-  matrix.forEach((row, rowIndex) => {
+  matrix.forEach(row => {
     const tr = document.createElement('tr')
     element.head.append(tr)
 
-    for (let columnIndex = 0; columnIndex < maxColumnIndex; columnIndex++) {
-      if (matrix[rowIndex][columnIndex]) {
-        const th = document.createElement('th')
-        th.textContent = matrix[rowIndex][columnIndex].label || matrix[rowIndex][columnIndex].id
-        tr.append(th)
-
-        let i = 1
-        while (matrix[rowIndex + i] && !matrix[rowIndex + i][columnIndex]) i++
-
-        if (i > 1) {
-          th.setAttribute('rowspan', String(i))
-        }
-
-        i = 1
-        while (!matrix[rowIndex][columnIndex + i] && columnIndex + i < maxColumnIndex) i++
-
-        if (i > 1) {
-          console.log(matrix[rowIndex])
-          th.setAttribute('colspan', String(i))
-          columnIndex += i
-        }
-      }
-    }
+    row.forEach(col => {
+      const th = document.createElement('th')
+      th.textContent = col.label || col.id
+      tr.append(th)
+    })
   })
 }
 

@@ -19,6 +19,9 @@ declare global {
     width?: number
     merge?: Merge
     children?: Column[]
+    mocker: boolean
+    colspan?: number
+    rowspan?: number
   }
 
 
