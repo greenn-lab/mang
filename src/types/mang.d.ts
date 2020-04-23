@@ -27,7 +27,6 @@ declare global {
 
   export interface GridElement {
     root: HTMLElement
-    style: CSSStyleSheet
     head: HTMLTableElement
     body: HTMLTableElement
   }

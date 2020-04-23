@@ -44,7 +44,7 @@ const headerMatrix = (columns: Column[]): Column[][] => {
   return matrix
 }
 
-export default (uid: string, element: GridElement, columns: Column[]): Column[] => {
+export default (element: GridElement, columns: Column[]): Column[] => {
   const matrix: Column[][] = headerMatrix(columns)
 
   matrix.forEach(row => {
@@ -55,6 +55,7 @@ export default (uid: string, element: GridElement, columns: Column[]): Column[] 
       .filter(col => !col.mocker)
       .forEach(col => {
         const th = document.createElement('th')
+        th.classList.add('mang--cell')
         th.textContent = col.label || col.id
 
         if (col.rowspan) {

@@ -3,8 +3,6 @@ import { initialize } from './render/intialize'
 class Mang {
   public static ids: string[] = []
 
-  private readonly uid: string
-
   private readonly element: GridElement
 
   private shape: Shape = {}
@@ -16,18 +14,8 @@ class Mang {
   private data: any[] = []
 
   constructor(id: string) {
-    this.uid = [
-      id.replace(/[^\w]/g, ''),
-      Date.now().toString(36)
-    ].join('-')
-
-    const style = document.createElement('style')
-    style.id = `mang__style-${this.uid}`
-    document.head.append(style)
-
     this.element = {
       root: document.querySelector(id) as HTMLElement,
-      style: style.sheet as CSSStyleSheet,
       head: document.createElement('table'),
       body: document.createElement('table')
     }
@@ -40,7 +28,7 @@ class Mang {
   render(data: any[] = []): void {
     this.data = data
 
-    initialize(this.uid, this.element, this.columns)
+    initialize(this.element, this.columns)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {
