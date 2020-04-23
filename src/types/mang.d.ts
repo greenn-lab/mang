@@ -19,9 +19,10 @@ declare global {
     width?: number
     merge?: Merge
     children?: Column[]
-    mocker: boolean
+    index?: number
     colspan?: number
     rowspan?: number
+    mocker: boolean
   }
 
 
@@ -29,6 +30,8 @@ declare global {
     root: HTMLElement
     head: HTMLTableElement
     body: HTMLTableElement
+    apex?: HTMLTableElement
+    left?: HTMLTableElement
   }
 
 
@@ -36,10 +39,7 @@ declare global {
     width?: number
     height?: number
     frozen?: number
-    header?: {
-      rows: number
-      cols: number
-    }
+    columns?: Column[]
   }
 
 

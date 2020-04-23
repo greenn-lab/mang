@@ -28,7 +28,7 @@ class Mang {
   render(data: any[] = []): void {
     this.data = data
 
-    initialize(this.element, this.columns)
+    initialize(this.element, this.shape, this.columns)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {
