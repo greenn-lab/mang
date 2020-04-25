@@ -1,11 +1,15 @@
-export default (element: GridElement, matrix: Column[][]): void => {
+export default (table: HTMLTableElement, matrix: Column[][], limitIndex: number = 0): void => {
   matrix.forEach(row => {
     const tr = document.createElement('tr')
-    element.head.append(tr)
+    table.append(tr)
 
     row
       .filter(col => !col.mocker)
       .forEach(col => {
+        if (limitIndex > 0 && col.index && limitIndex < col.index) {
+          return
+        }
+
         const th = document.createElement('th')
         th.classList.add('mang--cell')
         th.textContent = col.label || col.id

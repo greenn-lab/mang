@@ -11,6 +11,27 @@
       padding: 5px;
     }
 
+    .mang__root > header,
+    .mang__root > main {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mang__root > main {
+      display: flex;
+    }
+
+    .mang__cage-apex {
+      overflow: hidden;
+      position: absolute;
+      z-index: 1;
+    }
+    .mang--frozen .mang__cage-apex,
+    .mang--frozen .mang__cage-left {
+      box-shadow: 0 0 7px silver;
+    }
+
+
     .mang__root table {
       table-layout: fixed;
       border-collapse: collapse;
@@ -45,6 +66,7 @@
     new Mang('#mango')
         .size(500)
         .paginate('#mango-page')
+        .freeze(4)
         .setColumns([
             {id: 'no', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
             {

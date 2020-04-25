@@ -32,6 +32,10 @@ declare global {
     body: HTMLTableElement
     apex?: HTMLTableElement
     left?: HTMLTableElement
+    cage?: {
+      apex: HTMLDivElement
+      left: HTMLDivElement
+    }
   }
 
 

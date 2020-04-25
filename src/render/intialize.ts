@@ -1,39 +1,63 @@
 import renderHeader from './renderHeader'
 
+const appendTableAt = (
+  parent: Element,
+  table: HTMLTableElement = document.createElement('table'),
+  type: string
+): HTMLTableElement => {
+  table.classList.add(`mang__${type}`)
+  parent.append(table)
+
+  return table
+}
+
 const createSkeletonElement = (element: GridElement, shape: Shape): void => {
   element.root.classList.add('mang__root')
 
   const header = document.createElement('header')
-  header.append(element.head)
-  element.head.classList.add('mang__head')
+  element.head = appendTableAt(header, element.head, 'head')
 
   const main = document.createElement('main')
-  main.append(element.body)
-  element.body.classList.add('mang__body')
+  element.body = appendTableAt(main, element.body, 'body')
 
   if (shape.frozen) {
-    element.apex = document.createElement('table')
-    element.apex.classList.add('mang__apex')
-    header.prepend(element.apex)
+    element.cage = {
+      apex: document.createElement('div'),
+      left: document.createElement('div')
+    }
 
-    element.left = document.createElement('table')
-    element.left.classList.add('mang__left')
-    header.prepend(element.left)
+    element.apex = appendTableAt(element.cage.apex, element.apex, 'apex')
+    element.cage.apex.classList.add('mang__cage-apex')
+    header.prepend(element.cage.apex)
+
+    element.left = appendTableAt(element.cage.left, element.left, 'left')
+    element.cage.left.classList.add('mang__cage-left')
+    main.prepend(element.cage.left)
   }
 
   element.root.append(header, main)
 }
 
-const createColgroup = (element: GridElement, shape: Shape): void => {
+const createHeader = (element: GridElement, shape: Shape, matrix: Column[][]): void => {
+  renderHeader(element.head, matrix)
+
+  if (shape.frozen && element.apex) {
+    renderHeader(element.apex, matrix, shape.frozen)
+  }
+}
+
+const createWidthsByColgroup = (element: GridElement, shape: Shape): void => {
   if (shape.columns == null) {
     throw new Error('columns was wrong')
   }
 
   const colgroup = document.createElement('colgroup')
+  const { columns, frozen } = shape
+  const { head, body, apex, left, cage } = element
 
-  let total = 0
+  let totalWidth = 0
 
-  shape.columns.forEach((column, index) => {
+  columns.forEach((column, index) => {
     const col = document.createElement('col')
 
     col.classList.add('mang--col')
@@ -43,17 +67,53 @@ const createColgroup = (element: GridElement, shape: Shape): void => {
       const width = column.width || 100
       col.style.width = `${width}px`
 
-      total += width
+      totalWidth += width
     }
 
     colgroup.append(col)
   })
 
-  element.head.style.width = `${total}px`
-  element.head.prepend(colgroup)
+  head.style.width = `${totalWidth}px`
+  head.prepend(colgroup)
 
-  element.body.style.width = `${total}px`
-  element.body.prepend(colgroup.cloneNode(true))
+  if (!frozen) {
+    body.style.width = `${totalWidth}px`
+    body.prepend(colgroup.cloneNode(true))
+  } else {
+    const cageWidth = shape.columns
+      .filter((column, i) => !column.hide && i < frozen)
+      .reduce((width, column) => width + (column.width || 0), 0)
+
+    const cageColgroup = document.createElement('colgroup')
+    const bodyColgroup = colgroup.cloneNode(true) as Element
+
+    bodyColgroup.querySelectorAll('col')
+      .forEach((col, i) => {
+        if (i < frozen) {
+          cageColgroup.append(col)
+        }
+      })
+
+    body.style.width = `${totalWidth - cageWidth}px`
+    body.prepend(bodyColgroup)
+
+    element.root.classList.add('mang--frozen')
+
+    if (apex) {
+      apex.style.width = `${cageWidth}px`
+      apex.prepend(cageColgroup)
+    }
+
+    if (left) {
+      left.style.width = `${cageWidth}px`
+      left.prepend(cageColgroup.cloneNode(true))
+    }
+
+    if (cage) {
+      cage.apex.style.width = `${cageWidth}px`
+      cage.left.style.width = `${cageWidth}px`
+    }
+  }
 }
 
 const calculateColumnMatrix = (columns: Column[], matrix: Column[][], columnIndex: number = 0, rowIndex: number = 0): number => {
@@ -111,7 +171,7 @@ export const initialize = (element: GridElement, shape: Shape, columns: Column[]
 
   createSkeletonElement(element, shape)
 
-  renderHeader(element, matrix)
+  createHeader(element, shape, matrix)
 
-  createColgroup(element, shape)
+  createWidthsByColgroup(element, shape)
 }
