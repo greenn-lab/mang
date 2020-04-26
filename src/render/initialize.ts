@@ -46,73 +46,72 @@ const createHeader = (element: GridElement, shape: Shape, matrix: Column[][]): v
   }
 }
 
-const createWidthsByColgroup = (element: GridElement, shape: Shape): void => {
-  if (shape.columns == null) {
-    throw new Error('columns was wrong')
+const createFrozenWidthsByColgroup = (
+  { root, body, left, apex, cage }: GridElement,
+  { columns, frozen = 0 }: Shape,
+  colgroup: HTMLTableColElement,
+  totalWidth: number
+): void => {
+  const cageWidth = (columns || [])
+    .filter((column, i) => !column.hide && i < frozen)
+    .reduce((width, column) => width + (column.width || 0), 0)
+
+  const cageColgroup = document.createElement('colgroup')
+  const bodyColgroup = colgroup.cloneNode(true) as Element
+
+  bodyColgroup.querySelectorAll('col')
+    .forEach((col, i) => {
+      if (i < frozen) {
+        cageColgroup.append(col)
+      }
+    })
+
+  body.style.width = `${totalWidth - cageWidth}px`
+  body.prepend(bodyColgroup)
+
+  root.classList.add('mang--frozen')
+
+  if (apex) {
+    apex.style.width = `${cageWidth}px`
+    apex.prepend(cageColgroup)
   }
 
-  const colgroup = document.createElement('colgroup')
-  const { columns, frozen } = shape
-  const { head, body, apex, left, cage } = element
+  if (left) {
+    left.style.width = `${cageWidth}px`
+    left.prepend(cageColgroup.cloneNode(true))
+  }
 
-  let totalWidth = 0
+  if (cage) {
+    cage.apex.style.width = `${cageWidth}px`
+    cage.left.style.width = `${cageWidth}px`
+  }
+}
+
+const createWidthsByColgroup = (element: GridElement, shape: Shape): void => {
+  const { head, body } = element
+  const { columns = [], frozen } = shape
+
+  const colgroup = document.createElement('colgroup')
 
   columns.forEach((column, index) => {
     const col = document.createElement('col')
-
     col.classList.add('mang--col')
     col.dataset.index = String(index)
-
-    if (!column.hide) {
-      const width = column.width || 100
-      col.style.width = `${width}px`
-
-      totalWidth += width
-    }
-
+    col.style.width = column.hide ? '0' : `${column.width || 100}px`
     colgroup.append(col)
   })
+
+  const totalWidth = columns.reduce((width, column) => width
+    + (column.hide ? 0 : column.width || 100), 0)
 
   head.style.width = `${totalWidth}px`
   head.prepend(colgroup)
 
-  if (!frozen) {
+  if (frozen) {
+    createFrozenWidthsByColgroup(element, shape, colgroup, totalWidth)
+  } else {
     body.style.width = `${totalWidth}px`
     body.prepend(colgroup.cloneNode(true))
-  } else {
-    const cageWidth = shape.columns
-      .filter((column, i) => !column.hide && i < frozen)
-      .reduce((width, column) => width + (column.width || 0), 0)
-
-    const cageColgroup = document.createElement('colgroup')
-    const bodyColgroup = colgroup.cloneNode(true) as Element
-
-    bodyColgroup.querySelectorAll('col')
-      .forEach((col, i) => {
-        if (i < frozen) {
-          cageColgroup.append(col)
-        }
-      })
-
-    body.style.width = `${totalWidth - cageWidth}px`
-    body.prepend(bodyColgroup)
-
-    element.root.classList.add('mang--frozen')
-
-    if (apex) {
-      apex.style.width = `${cageWidth}px`
-      apex.prepend(cageColgroup)
-    }
-
-    if (left) {
-      left.style.width = `${cageWidth}px`
-      left.prepend(cageColgroup.cloneNode(true))
-    }
-
-    if (cage) {
-      cage.apex.style.width = `${cageWidth}px`
-      cage.left.style.width = `${cageWidth}px`
-    }
   }
 }
 
@@ -166,7 +165,7 @@ const calculatedMatrix = (columns: Column[], shape: Shape): Column[][] => {
 }
 
 
-export const initialize = (element: GridElement, shape: Shape, columns: Column[]): void => {
+export default (element: GridElement, shape: Shape, columns: Column[]): void => {
   const matrix: Column[][] = calculatedMatrix(columns, shape)
 
   createSkeletonElement(element, shape)

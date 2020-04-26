@@ -1,4 +1,4 @@
-import { initialize } from './render/intialize'
+import initialize from './render/initialize'
 
 class Mang {
   public static ids: string[] = []
@@ -25,8 +25,10 @@ class Mang {
     }
   }
 
-  render(data: any[] = []): void {
-    this.data = data
+  render(data?: any[]): void {
+    if (Array.isArray(data)) {
+      this.data = data
+    }
 
     initialize(this.element, this.shape, this.columns)
   }
