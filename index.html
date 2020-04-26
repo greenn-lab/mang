@@ -17,20 +17,16 @@
       position: relative;
     }
 
-    .mang__root > main {
-      display: flex;
+    .mang--frozen .mang__body {
+      position: relative;
     }
-
-    .mang__cage-apex {
+    .mang--frozen .mang__cage-apex,
+    .mang--frozen .mang__cage-left {
+      box-shadow: 2px 0 2px silver;
       overflow: hidden;
       position: absolute;
       z-index: 1;
     }
-    .mang--frozen .mang__cage-apex,
-    .mang--frozen .mang__cage-left {
-      box-shadow: 0 0 7px silver;
-    }
-
 
     .mang__root table {
       table-layout: fixed;
@@ -48,6 +44,10 @@
       box-sizing: border-box;
       overflow: hidden;
     }
+
+    .mang--cell {
+      height: 30px;
+    }
   </style>
 </head>
 <body>
@@ -63,39 +63,45 @@
 
 <script src="mang.js"></script>
 <script>
-    new Mang('#mango')
-        .size(500)
-        .paginate('#mango-page')
-        .freeze(4)
-        .setColumns([
-            {id: 'no', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
-            {
-                id: 'name', type: 'TEXT', children: [
+    fetch('/tests/base-1.json')
+        .then(res => res.json())
+        .then(res => {
+
+            new Mang('#mango')
+                .size(500)
+                .paginate('#mango-page')
+                .freeze(4)
+                .setColumns([
+                    {id: 'no', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
                     {
-                        id: 'firstAndMiddleName', children: [
-                            {id: 'firstName', label: 'First Name', align: 'RIGHT', width: 120},
-                            {id: 'middleName', label: 'Middle Name', align: 'CENTER', width: 90}
+                        id: 'name', type: 'TEXT', children: [
+                            {
+                                id: 'firstAndMiddleName', children: [
+                                    {id: 'firstName', label: 'First Name', align: 'RIGHT', width: 120},
+                                    {id: 'middleName', label: 'Middle Name', align: 'CENTER', width: 90}
+                                ]
+                            },
+                            {id: 'lastName', label: 'Last Name', align: 'LEFT', width: 130}
                         ]
                     },
-                    {id: 'lastName', label: 'Last Name', align: 'LEFT', width: 130}
-                ]
-            },
-            {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
-            {id: 'birthday', type: 'DATE', pattern: 'dd. MMM.', width: 70},
-            {
-                id: 'work', children: [
-                    {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
-                    {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150}
-                ]
-            },
-            {
-                id: 'shape', children: [
-                    {id: 'height', type: 'NUMBER', pattern: '( 0.# kg )'},
-                    {id: 'tall', type: 'NUMBER', pattern: ' 0.0# m '}
-                ]
-            }
-        ])
-        .render()
+                    {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
+                    {id: 'birthday', type: 'DATE', pattern: 'dd. MMM.', width: 70},
+                    {
+                        id: 'work', children: [
+                            {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
+                            {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150}
+                        ]
+                    },
+                    {
+                        id: 'shape', children: [
+                            {id: 'height', type: 'NUMBER', pattern: '( 0.# kg )'},
+                            {id: 'tall', type: 'NUMBER', pattern: ' 0.0# m '}
+                        ]
+                    }
+                ])
+                .render(res)
+
+        })
 </script>
 </body>
 </html>

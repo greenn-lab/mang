@@ -42,8 +42,12 @@ declare global {
   export interface Shape {
     width?: number
     height?: number
-    frozen?: number
-    columns?: Column[]
+    frozen: number
+    columns: Column[],
+    row: {
+      left: HTMLTableRowElement[],
+      body: HTMLTableRowElement[]
+    }
   }
 
 

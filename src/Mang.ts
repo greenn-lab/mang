@@ -1,11 +1,19 @@
 import initialize from './render/initialize'
+import renderBody from './render/renderBody'
 
 class Mang {
   public static ids: string[] = []
 
   private readonly element: GridElement
 
-  private shape: Shape = {}
+  private shape: Shape = {
+    frozen: 0,
+    columns: [],
+    row: {
+      left: [],
+      body: []
+    }
+  }
 
   private pagination: Pagination | undefined
 
@@ -31,6 +39,8 @@ class Mang {
     }
 
     initialize(this.element, this.shape, this.columns)
+
+    renderBody(this.element, this.shape, this.data)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {

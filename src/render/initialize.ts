@@ -48,7 +48,7 @@ const createHeader = (element: GridElement, shape: Shape, matrix: Column[][]): v
 
 const createFrozenWidthsByColgroup = (
   { root, body, left, apex, cage }: GridElement,
-  { columns, frozen = 0 }: Shape,
+  { columns, frozen }: Shape,
   colgroup: HTMLTableColElement,
   totalWidth: number
 ): void => {
@@ -66,6 +66,7 @@ const createFrozenWidthsByColgroup = (
       }
     })
 
+  body.style.left = `${cageWidth}px`
   body.style.width = `${totalWidth - cageWidth}px`
   body.prepend(bodyColgroup)
 
