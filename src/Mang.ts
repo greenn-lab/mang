@@ -1,4 +1,4 @@
-import initialize from './render/initialize'
+import initialize from './initialize'
 import renderBody from './render/renderBody'
 
 class Mang {
@@ -15,11 +15,12 @@ class Mang {
     }
   }
 
-  private pagination: Pagination | undefined
-
   private columns: Column[] = []
 
-  private data: any[] = []
+  private data: GridData = {
+    list: [],
+    search: {}
+  }
 
   constructor(id: string) {
     this.element = {
@@ -35,7 +36,7 @@ class Mang {
 
   render(data?: any[]): void {
     if (Array.isArray(data)) {
-      this.data = data
+      this.data.list = data
     }
 
     initialize(this.element, this.shape, this.columns)
@@ -56,9 +57,9 @@ class Mang {
   }
 
   paginate(element: Element, size: number = 20, range: number = 5): Mang {
-    this.pagination = {
+    this.data.pagination = {
       element,
-      page: 1,
+      page: 0,
       size,
       range
     }

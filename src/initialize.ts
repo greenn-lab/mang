@@ -1,4 +1,4 @@
-import renderHeader from './renderHeader'
+import renderHeader from './render/renderHeader'
 
 const appendTableAt = (
   parent: Element,

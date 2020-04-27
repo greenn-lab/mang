@@ -1,3 +1,5 @@
+import renderRow from './renderRow'
+
 function createFrozenRowContainer({ row, frozen }: Shape) {
   row.left = []
 
@@ -34,14 +36,10 @@ function createRowContainer(shape: Shape): void {
   }
 }
 
-export default (element: GridElement, shape: Shape, data: any[]): void => {
+export default (element: GridElement, shape: Shape, data: GridData): void => {
   createRowContainer(shape)
 
-  data.forEach(item => {
-    if (shape.frozen && element.left) {
-      element.left.append(shape.row.left[0].cloneNode(true))
-    }
-
-    element.body.append(shape.row.body[0].cloneNode(true))
+  data.list.forEach(row => {
+    renderRow(element, shape, row)
   })
 }

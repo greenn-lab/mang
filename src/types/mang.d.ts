@@ -5,7 +5,7 @@ declare global {
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export type Surface = (value: any, row: any) => {} | string | undefined
+  export type Surface = (value: any, row: {[key: string]: any}) => {} | string | undefined
 
   export interface Column {
     id: string
@@ -51,20 +51,26 @@ declare global {
   }
 
 
+  export interface GridData {
+    list: any[],
+    pagination?: {
+      element: Element
+      page: number
+      size: number
+      range: number
+    },
+    search: {
+      [key: string]: any
+    },
+    sort?: {
+      id: string,
+      direction: 'asc' | 'desc' | undefined
+    }[]
+  }
+
+
   export interface Option {
     multiSelection: false
-  }
-
-  export interface State {
-
-  }
-
-
-  export interface Pagination {
-    element: Element
-    page?: number
-    size?: number
-    range?: number
   }
 
 

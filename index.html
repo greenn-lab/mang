@@ -89,7 +89,10 @@
                     {
                         id: 'work', children: [
                             {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
-                            {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150}
+                            {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150},
+                            {id: 'balance', surface: value => {
+                                'test'
+                              }, width: 60}
                         ]
                     },
                     {
