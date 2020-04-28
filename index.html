@@ -37,6 +37,10 @@
       border-width: 0 1px 1px 0;
     }
 
+    .mang__root tr {
+      height: 30px;
+    }
+
     .mang__root th,
     .mang__root td {
       background-color: white;
@@ -46,7 +50,22 @@
     }
 
     .mang--cell {
-      height: 30px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mang--align-left {
+      text-align: left;
+    }
+    .mang--cell[data-type=BOOLEAN],
+    .mang--cell[data-type=RADIO],
+    .mang--cell[data-type=CHECKBOX],
+    .mang--align-center {
+      text-align: center;
+    }
+    .mang--cell[data-type=NUMBER],
+    .mang--align-right {
+      text-align: right;
     }
   </style>
 </head>
@@ -72,22 +91,22 @@
                 .paginate('#mango-page')
                 .freeze(4)
                 .setColumns([
-                    {id: 'no', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
+                    {type: 'ROW_NUMBER', align: 'CENTER', width: 40},
                     {
                         id: 'name', type: 'TEXT', children: [
                             {
-                                id: 'firstAndMiddleName', children: [
+                                children: [
                                     {id: 'firstName', label: 'First Name', align: 'RIGHT', width: 120},
-                                    {id: 'middleName', label: 'Middle Name', align: 'CENTER', width: 90}
+                                    {id: 'lastName', label: 'Middle Name', align: 'CENTER', width: 90}
                                 ]
                             },
-                            {id: 'lastName', label: 'Last Name', align: 'LEFT', width: 130}
+                            {id: 'middleName', label: 'Last Name', align: 'LEFT', width: 130}
                         ]
                     },
                     {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
                     {id: 'birthday', type: 'DATE', pattern: 'dd. MMM.', width: 70},
                     {
-                        id: 'work', children: [
+                        label: 'work', children: [
                             {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
                             {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150},
                             {id: 'balance', surface: value => {

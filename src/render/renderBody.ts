@@ -1,45 +1,62 @@
 import renderRow from './renderRow'
 
-function createFrozenRowContainer({ row, frozen }: Shape) {
-  row.left = []
+function createCellContainer(column: Column): HTMLTableDataCellElement {
+  const { id, index, type, align, pattern } = column
+  const td = document.createElement('td')
 
-  row.body.forEach(tr => {
-    const ctr = document.createElement('tr')
+  td.classList.add('mang--cell')
 
-    for (let i = 0; i < frozen; i++) {
-      ctr.append(tr.cells[i])
-    }
+  if (align) {
+    td.classList.add(`mang--align-${align.toLowerCase()}`)
+  }
 
-    row.left.push(ctr)
-  })
+  td.dataset.id = id
+  td.dataset.index = String(index)
+
+  if (type) {
+    td.dataset.type = type
+  }
+
+  if (pattern) {
+    td.dataset.pattern = pattern
+  }
+
+  return td
 }
 
-function createRowContainer(shape: Shape): void {
-  const { row, columns, frozen } = shape
+function createRowContainer(columns: Column[]): HTMLTableRowElement {
+  const tr = document.createElement('tr')
 
-  if (row.body.length === 0) {
-    const tr = document.createElement('tr')
-    row.body.push(tr)
-
-    columns.forEach(column => {
-      const td = document.createElement('td')
-      td.classList.add('mang--cell', `mang--cell-${column.id.replace(/\./g, '--')}`)
-      td.dataset.id = column.id
-      td.dataset.index = String(column.index)
-
-      tr.append(td)
+  columns
+    .forEach(column => {
+      column.cell = createCellContainer(column)
+      tr.append(column.cell)
     })
-  }
 
-  if (frozen) {
-    createFrozenRowContainer(shape)
-  }
+  return tr
 }
 
 export default (element: GridElement, shape: Shape, data: GridData): void => {
-  createRowContainer(shape)
+  const { columns, row, frozen } = shape
+  const { body, left } = element
+  const bodyColumns = columns.slice(frozen)
+  const leftColumns = columns.slice(0, frozen)
 
-  data.list.forEach(row => {
-    renderRow(element, shape, row)
+  row.body = [
+    createRowContainer(bodyColumns)
+  ]
+
+  if (frozen) {
+    row.left = [
+      createRowContainer(leftColumns)
+    ]
+  }
+
+  data.list.slice(0, 1).forEach((item, i) => {
+    renderRow(i, row.body, body, bodyColumns, item)
+
+    if (left) {
+      renderRow(i, row.left, left, leftColumns, item)
+    }
   })
 }

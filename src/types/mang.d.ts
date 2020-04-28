@@ -1,27 +1,28 @@
 export {}
 
 declare global {
-  export type Type = 'TEXT' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO' | 'ROW_NUMBER'
+  export type Type = 'TEXT' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO'
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
   export type Surface = (value: any, row: {[key: string]: any}) => {} | string | undefined
 
   export interface Column {
-    id: string
-    label?: string
-    type?: Type
+    id: string | 'ROW_NUMBER' | ''
+    label: string | ''
+    type: Type | 'TEXT'
+    hide?: boolean
     pattern?: string
     surface?: Surface
-    editable?: boolean
-    hide?: boolean
     align?: Align
     width?: number
+    editable?: boolean
     merge?: Merge
     children?: Column[]
     index?: number
     colspan?: number
     rowspan?: number
+    cell?: HTMLTableDataCellElement
     mocker: boolean
   }
 

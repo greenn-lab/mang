@@ -1,4 +1,4 @@
-export default (column: Column, value: any, td: HTMLTableDataCellElement) => {
+export default (td: HTMLTableDataCellElement, column: Column, value: any) => {
   switch (column.type) {
     case 'TEXT':
     default:
