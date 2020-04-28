@@ -1,20 +1,30 @@
-import renderCell from './renderCell'
+function extractValueByKeys(keys: string[], data: { [key: string]: any }): any {
+  let _data = data
 
-function rendering(rowIndex: number, data: { [p: string]: any }, columns: Column[]): void {
+  keys.forEach(key => {
+    _data = _data && _data[key] ? _data[key] : undefined
+  })
+
+  return _data || ''
+}
+
+function rendering(rowIndex: number, data: { [key: string]: any }, columns: Column[]): void {
   columns
     .forEach(column => {
       const { id, surface, cell } = column
 
-      console.log(column, data)
-
       if (cell) {
-        let value = id === 'ROW_NUMBER' ? rowIndex + 1 : data[id]
+        let value
 
-        if (value && surface) {
-          value = surface(value, data)
+        if (id === 'ROW_NUMBER') {
+          value = rowIndex + 1
+        } else if (surface) {
+          value = surface(data, rowIndex)
+        } else {
+          value = extractValueByKeys(column.keys.concat(column.id), data)
         }
 
-        renderCell(cell, column, value)
+        cell.innerText = value
       }
     })
 }

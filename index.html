@@ -91,16 +91,16 @@
                 .paginate('#mango-page')
                 .freeze(4)
                 .setColumns([
-                    {type: 'ROW_NUMBER', align: 'CENTER', width: 40},
+                    {id: 'ROW_NUMBER', align: 'CENTER', width: 40},
                     {
                         id: 'name', type: 'TEXT', children: [
                             {
                                 children: [
-                                    {id: 'firstName', label: 'First Name', align: 'RIGHT', width: 120},
-                                    {id: 'lastName', label: 'Middle Name', align: 'CENTER', width: 90}
+                                    {id: 'first', label: 'First Name', align: 'RIGHT', width: 120},
+                                    {id: 'last', label: 'Middle Name', align: 'CENTER', width: 90}
                                 ]
                             },
-                            {id: 'middleName', label: 'Last Name', align: 'LEFT', width: 130}
+                            {id: 'middle', label: 'Last Name', align: 'LEFT', width: 130}
                         ]
                     },
                     {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
@@ -109,9 +109,7 @@
                         label: 'work', children: [
                             {id: 'hired', type: 'DATE', pattern: 'yyyy-MM-dd', width: 110},
                             {id: 'salary', type: 'NUMBER', pattern: '#,##0.00', width: 150},
-                            {id: 'balance', surface: value => {
-                                'test'
-                              }, width: 60}
+                            {id: 'balance', surface: value => 'test', width: 60}
                         ]
                     },
                     {

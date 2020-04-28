@@ -52,11 +52,12 @@ export default (element: GridElement, shape: Shape, data: GridData): void => {
     ]
   }
 
-  data.list.slice(0, 1).forEach((item, i) => {
-    renderRow(i, row.body, body, bodyColumns, item)
+  data.list
+    .forEach((item, i) => {
+      renderRow(i, row.body, body, bodyColumns, item)
 
-    if (left) {
-      renderRow(i, row.left, left, leftColumns, item)
-    }
-  })
+      if (left) {
+        renderRow(i, row.left, left, leftColumns, item)
+      }
+    })
 }

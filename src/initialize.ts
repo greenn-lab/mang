@@ -116,16 +116,30 @@ const createWidthsByColgroup = (element: GridElement, shape: Shape): void => {
   }
 }
 
-const calculateColumnMatrix = (columns: Column[], matrix: Column[][], columnIndex: number = 0, rowIndex: number = 0): number => {
+const calculateColumnMatrix = (
+  columns: Column[],
+  matrix: Column[][],
+  columnIndex: number = 0,
+  rowIndex: number = 0,
+  keys: string[] = []
+): number => {
   columns.forEach(column => {
     if (!matrix[rowIndex]) {
       matrix[rowIndex] = []
     }
 
+    column.keys = keys
+
     matrix[rowIndex][columnIndex] = column
 
     if (column.children && column.children.length > 0) {
-      columnIndex = calculateColumnMatrix(column.children, matrix, columnIndex, rowIndex + 1)
+      columnIndex = calculateColumnMatrix(
+        column.children,
+        matrix,
+        columnIndex,
+        rowIndex + 1,
+        column.id ? keys.concat(column.id) : keys
+      )
     } else {
       columnIndex++
     }

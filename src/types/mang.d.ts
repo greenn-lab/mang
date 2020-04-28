@@ -1,14 +1,15 @@
 export {}
 
 declare global {
-  export type Type = 'TEXT' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO'
+  export type Type = 'TEXT' | 'NUMBER' | 'DATE' | 'TIMESTAMP' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO'
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export type Surface = (value: any, row: {[key: string]: any}) => {} | string | undefined
+  export type Surface = (row: {[key: string]: any}, rowIndex: number) => {} | string | undefined
 
   export interface Column {
     id: string | 'ROW_NUMBER' | ''
+    keys: string[]
     label: string | ''
     type: Type | 'TEXT'
     hide?: boolean
