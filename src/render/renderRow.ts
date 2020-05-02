@@ -1,4 +1,4 @@
-function extractValueByKeys(keys: string[], data: { [key: string]: any }): any {
+function getValue(keys: string[], data: { [key: string]: any }): any {
   let _data = data
 
   keys.forEach(key => {
@@ -21,7 +21,7 @@ function rendering(rowIndex: number, data: { [key: string]: any }, columns: Colu
         } else if (surface) {
           value = surface(data, rowIndex)
         } else {
-          value = extractValueByKeys(column.keys.concat(column.id), data)
+          value = getValue(column.keys.concat(column.id), data)
         }
 
         cell.innerText = value
