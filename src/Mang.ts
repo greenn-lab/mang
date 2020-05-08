@@ -1,5 +1,6 @@
 import initialize from './initialize'
 import renderBody from './render/renderBody'
+import registryEvent from './event/registry'
 
 class Mang {
   public static ids: string[] = []
@@ -7,8 +8,18 @@ class Mang {
   private readonly element: GridElement
 
   private shape: Shape = {
+    width: -1,
+    height: -1,
+    body: {
+      width: 0,
+      height: 0
+    },
     frozen: 0,
     columns: [],
+    scroll: {
+      x: 0,
+      y: 0
+    },
     row: {
       left: [],
       body: []
@@ -26,7 +37,15 @@ class Mang {
     this.element = {
       root: document.querySelector(id) as HTMLElement,
       head: document.createElement('table'),
-      body: document.createElement('table')
+      body: document.createElement('table'),
+      apex: document.createElement('table'),
+      left: document.createElement('table'),
+      cage: {
+        head: document.createElement('header'),
+        body: document.createElement('main'),
+        apex: document.createElement('div'),
+        left: document.createElement('div'),
+      }
     }
 
     if (this.element.root == null) {
@@ -42,6 +61,8 @@ class Mang {
     initialize(this.element, this.shape, this.columns)
 
     renderBody(this.element, this.shape, this.data)
+
+    registryEvent(this.element, this.shape)
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {

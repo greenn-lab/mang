@@ -32,9 +32,11 @@ declare global {
     root: HTMLElement
     head: HTMLTableElement
     body: HTMLTableElement
-    apex?: HTMLTableElement
-    left?: HTMLTableElement
-    cage?: {
+    apex: HTMLTableElement
+    left: HTMLTableElement
+    cage: {
+      head: HTMLElement
+      body: HTMLElement
       apex: HTMLDivElement
       left: HTMLDivElement
     }
@@ -42,10 +44,18 @@ declare global {
 
 
   export interface Shape {
-    width?: number
-    height?: number
+    width: number
+    height: number
+    body: {
+      width: number
+      height: number
+    }
     frozen: number
-    columns: Column[],
+    columns: Column[]
+    scroll: {
+      x: number
+      y: number
+    }
     row: {
       left: HTMLTableRowElement[],
       body: HTMLTableRowElement[]
