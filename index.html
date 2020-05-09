@@ -20,6 +20,7 @@
     .mang--frozen .mang__body {
       position: relative;
     }
+
     .mang--frozen .mang__cage-apex,
     .mang--frozen .mang__cage-left {
       box-shadow: 2px 0 2px silver;
@@ -57,12 +58,14 @@
     .mang--align-left {
       text-align: left;
     }
+
     .mang--cell[data-type=BOOLEAN],
     .mang--cell[data-type=RADIO],
     .mang--cell[data-type=CHECKBOX],
     .mang--align-center {
       text-align: center;
     }
+
     .mang--cell[data-type=NUMBER],
     .mang--align-right {
       text-align: right;
@@ -82,11 +85,13 @@
 
 <script src="mang.js"></script>
 <script>
+    let m;
+
     fetch('/tests/base-1.json')
         .then(res => res.json())
         .then(res => {
 
-            new Mang('#mango')
+            m = new Mang('#mango')
                 .size(500, 300)
                 .paginate('#mango-page')
                 .freeze(4)
@@ -114,13 +119,12 @@
                     },
                     {
                         id: 'shape', children: [
-                            {id: 'height', type: 'NUMBER', pattern: '( 0.# kg )'},
-                            {id: 'tall', type: 'NUMBER', pattern: ' 0.0# m '}
+                            {id: 'weight', type: 'NUMBER', pattern: '( 0.# kg )'},
+                            {id: 'height', type: 'NUMBER', pattern: ' 0.0# m '}
                         ]
                     }
                 ])
                 .render(res)
-
         })
 </script>
 </body>

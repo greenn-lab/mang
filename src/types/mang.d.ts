@@ -5,13 +5,13 @@ declare global {
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export type Surface = (row: {[key: string]: any}, rowIndex: number) => {} | string | undefined
+  export type Surface = ((row: {[key: string]: any}) => string) | string
 
   export interface Column {
-    id: string | 'ROW_NUMBER' | ''
+    id: string
     keys: string[]
     label: string | ''
-    type: Type | 'TEXT'
+    type: Type | 'TEXT' | 'ROW_NUMBER'
     hide?: boolean
     pattern?: string
     surface?: Surface
@@ -52,12 +52,13 @@ declare global {
     }
     frozen: number
     columns: Column[]
+    columnMap: { [key: string]: Column }
     scroll: {
       x: number
       y: number
     }
     row: {
-      left: HTMLTableRowElement[],
+      left: HTMLTableRowElement[]
       body: HTMLTableRowElement[]
     }
   }

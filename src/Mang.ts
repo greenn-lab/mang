@@ -16,6 +16,7 @@ class Mang {
     },
     frozen: 0,
     columns: [],
+    columnMap: {},
     scroll: {
       x: 0,
       y: 0
@@ -34,6 +35,10 @@ class Mang {
   }
 
   constructor(id: string) {
+    if (document.querySelector(id) == null) {
+      throw new Error(`#${id} must be exists.`)
+    }
+
     this.element = {
       root: document.querySelector(id) as HTMLElement,
       head: document.createElement('table'),
@@ -47,13 +52,9 @@ class Mang {
         left: document.createElement('div'),
       }
     }
-
-    if (this.element.root == null) {
-      throw new Error(`#${id} must be exists.`)
-    }
   }
 
-  render(data?: any[]): void {
+  render(data?: any[]): Mang {
     if (Array.isArray(data)) {
       this.data.list = data
     }
@@ -63,6 +64,8 @@ class Mang {
     renderBody(this.element, this.shape, this.data)
 
     registryEvent(this.element, this.shape)
+
+    return this
   }
 
   size(width: number = -1, height: number = -1, frozen: number = 0): Mang {

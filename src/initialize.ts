@@ -9,7 +9,7 @@ const appendTableAt = (
   parent.append(table)
 }
 
-const createSkeletonElement = (
+const compositeElements = (
   { root, head, body, apex, left, cage }: GridElement,
   { frozen }: Shape
 ): void => {
@@ -167,18 +167,71 @@ const calculatedMatrix = (columns: Column[], shape: Shape): Column[][] => {
   }
 
   shape.columns = matrix[matrix.length - 1]
+  shape.columnMap = shape.columns
+    .reduce((obj, column) => ({ ...obj, [column.id]: column }), {})
+
   return matrix
 }
 
+function createDataCellTemplate(column: Column): HTMLTableDataCellElement {
+  const { id, type, align, pattern } = column
+  const td = document.createElement('td')
+
+  td.classList.add('mang--cell')
+
+  if (align) {
+    td.classList.add(`mang--align-${align.toLowerCase()}`)
+  }
+
+  td.dataset.id = id
+
+  if (type) {
+    td.dataset.type = type
+  }
+
+  if (pattern) {
+    td.dataset.pattern = pattern
+  }
+
+  return td
+}
+
+function createRowTemplate(columns: Column[]): HTMLTableRowElement {
+  const tr = document.createElement('tr')
+
+  columns
+    .forEach(column => {
+      column.cell = createDataCellTemplate(column)
+      tr.append(column.cell)
+    })
+
+  return tr
+}
+
+const buildRowTemplate = (element: GridElement, shape: Shape): void => {
+  const { columns, row, frozen } = shape
+
+  row.body = [
+    createRowTemplate(columns.slice(shape.frozen))
+  ]
+
+  if (frozen) {
+    row.left = [
+      createRowTemplate(columns.slice(0, shape.frozen))
+    ]
+  }
+}
 
 export default (element: GridElement, shape: Shape, columns: Column[]): void => {
   const matrix: Column[][] = calculatedMatrix(columns, shape)
 
-  createSkeletonElement(element, shape)
+  compositeElements(element, shape)
 
   createHeader(element, shape, matrix)
 
   createWidthsByColgroup(element, shape)
+
+  buildRowTemplate(element, shape)
 
   if (shape.height > 0) {
     shape.body.height = shape.height - element.head.offsetHeight

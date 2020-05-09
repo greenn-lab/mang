@@ -1,44 +1,29 @@
-function getValue(keys: string[], data: { [key: string]: any }): any {
-  let _data = data
+import renderCell from './renderCell'
 
-  keys.forEach(key => {
-    _data = _data && _data[key] ? _data[key] : undefined
+function rendering(tr: HTMLTableRowElement, data: { [p: string]: any }, columnMap: { [p: string]: Column }, body: HTMLTableElement) {
+  Array.from(tr.cells).forEach(td => {
+    const { id } = td.dataset
+
+    if (id) {
+      renderCell(td, data, id, columnMap[id])
+    }
   })
 
-  return _data || ''
-}
-
-function rendering(rowIndex: number, data: { [key: string]: any }, columns: Column[]): void {
-  columns
-    .forEach(column => {
-      const { id, surface, cell } = column
-
-      if (cell) {
-        let value
-
-        if (id === 'ROW_NUMBER') {
-          value = rowIndex + 1
-        } else if (surface) {
-          value = surface(data, rowIndex)
-        } else {
-          value = getValue(column.keys.concat(column.id), data)
-        }
-
-        cell.innerText = value
-      }
-    })
+  body.append(tr.cloneNode(true))
 }
 
 export default (
-  rowIndex: number,
-  container: HTMLTableRowElement[],
-  table: HTMLTableElement,
-  columns: Column[],
-  data: { [key: string]: any }
+  data: { [p: string]: any },
+  { body, left }: GridElement,
+  { row, columnMap, frozen }: Shape
 ) => {
-  container.forEach(tr => {
-    rendering(rowIndex, data, columns)
-
-    table.append(tr.cloneNode(true))
+  row.body.forEach(tr => {
+    rendering(tr, data, columnMap, body)
   })
+
+  if (frozen) {
+    row.left.forEach(tr => {
+      rendering(tr, data, columnMap, left)
+    })
+  }
 }
