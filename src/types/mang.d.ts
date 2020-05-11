@@ -1,17 +1,17 @@
 export {}
 
 declare global {
-  export type Type = 'TEXT' | 'NUMBER' | 'DATE' | 'TIMESTAMP' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO'
+  export type ColumnType = 'TEXT' | 'NUMBER' | 'DATE' | 'TIMESTAMP' | 'ROW_NUMBER' | 'BOOLEAN' | 'CHECKBOX' | 'RADIO'
 
   export type Align = 'LEFT' | 'RIGHT' | 'CENTER'
 
-  export type Surface = ((row: {[key: string]: any}) => string) | string
+  export type Surface = ((row: { [key: string]: any }) => string) | string
 
   export interface Column {
     id: string
     keys: string[]
     label: string | ''
-    type: Type | 'TEXT' | 'ROW_NUMBER'
+    type: ColumnType
     hide?: boolean
     pattern?: string
     surface?: Surface
@@ -65,7 +65,7 @@ declare global {
 
 
   export interface GridData {
-    list: any[],
+    list: { [key: string]: any }[],
     pagination?: {
       element: Element
       page: number

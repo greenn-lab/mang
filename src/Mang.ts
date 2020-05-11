@@ -54,9 +54,17 @@ class Mang {
     }
   }
 
-  render(data?: any[]): Mang {
+  setData(data: { [key: string]: any }[]): Mang {
     if (Array.isArray(data)) {
-      this.data.list = data
+      this.data.list = data.map(row => Object.assign(row, { __status: '' }))
+    }
+
+    return this
+  }
+
+  render(data?: { [key: string]: any }[]): Mang {
+    if (data) {
+      this.setData(data)
     }
 
     initialize(this.element, this.shape, this.columns)

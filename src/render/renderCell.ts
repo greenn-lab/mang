@@ -9,16 +9,20 @@ function getValue(keys: string[], data: { [key: string]: any }): any {
 }
 
 export default (td: HTMLTableDataCellElement, data: { [p: string]: any }, id: string, column: Column) => {
-
-  console.log(data, id, column)
-
   if (column.surface) {
     td.innerHTML = typeof column.surface === 'string'
       ? column.surface
       : column.surface(data)
   } else {
     switch (column.type) {
+      case 'ROW_NUMBER':
+        td.innerText = data.__rowNumber
+        break
       case 'TEXT':
+      case 'NUMBER':
+      case 'DATE':
+      case 'TIMESTAMP':
+      case 'BOOLEAN':
       default:
         td.innerText = getValue([...column.keys, column.id], data)
     }
