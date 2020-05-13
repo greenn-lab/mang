@@ -16,14 +16,15 @@ declare global {
     pattern?: string
     surface?: Surface
     align?: Align
-    width?: number
+    width: number | 100
     editable?: boolean
     merge?: Merge
     children?: Column[]
     index?: number
     colspan?: number
     rowspan?: number
-    cell?: HTMLTableDataCellElement
+    cellTemplate?: HTMLTableDataCellElement
+    cols: HTMLTableColElement[]
     mocker: boolean
   }
 
@@ -40,16 +41,20 @@ declare global {
       apex: HTMLDivElement
       left: HTMLDivElement
     }
+    scroll: {
+      x: HTMLElement
+      y: HTMLElement
+    }
   }
 
 
   export interface Shape {
     width: number
     height: number
-    body: {
-      width: number
-      height: number
-    }
+    bodyWidth: number
+    bodyHeight: number
+    leftWidth: number
+    totalWidth: number
     frozen: number
     columns: Column[]
     columnMap: { [key: string]: Column }

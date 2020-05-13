@@ -1,12 +1,31 @@
-export default (e: WheelEvent, element: GridElement, { body, scroll }: Shape): void => {
-  e.preventDefault()
+let x = 0
 
-  scroll.x += e.deltaX
-  scroll.y += e.deltaY
+const y = 0
 
-  if (scroll.x > body.width - 100) scroll.x = body.width - 100
-  else if (scroll.x < 0) scroll.x = 0
+function horizontal(e: MouseEvent, scrollElement: HTMLElement, shape: Shape) {
+  console.log('horizontal', e.x - x)
+}
 
-  element.head.style.marginLeft = `${scroll.x * -1}px`
-  element.body.style.marginLeft = `${scroll.x * -1}px`
+export default (element: GridElement, shape: Shape): void => {
+  element.scroll.x
+    .addEventListener('mousedown', (e: MouseEvent) => {
+      x = e.x
+
+      const fn = (ev: MouseEvent) => {
+        horizontal(ev, element.scroll.x, shape)
+      }
+
+      const release = (ev: MouseEvent) => {
+        console.log(ev.type)
+        element.root.classList.remove('mang--dragging')
+        element.root.removeEventListener('mousemove', fn)
+        element.root.removeEventListener('mouseup', release)
+        element.root.removeEventListener('mouseleave', release)
+      }
+
+      element.root.classList.add('mang--dragging')
+      element.root.addEventListener('mousemove', fn)
+      element.root.addEventListener('mouseup', release)
+      element.root.addEventListener('mouseleave', release)
+    })
 }

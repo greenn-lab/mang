@@ -1,4 +1,12 @@
-export default (table: HTMLTableElement, matrix: Column[][], limitIndex: number = 0): void => {
+function createTh(col: Column): HTMLTableHeaderCellElement {
+  const th = document.createElement('th')
+  th.classList.add('mang--cell')
+  th.textContent = col.label || col.id
+  th.dataset.index = String(col.index)
+  return th
+}
+
+export default (table: HTMLTableElement, matrix: Column[][]): void => {
   matrix.forEach(row => {
     const tr = document.createElement('tr')
     table.append(tr)
@@ -6,14 +14,7 @@ export default (table: HTMLTableElement, matrix: Column[][], limitIndex: number 
     row
       .filter(col => !col.mocker)
       .forEach(col => {
-        if (limitIndex > 0 && col.index && limitIndex < col.index) {
-          return
-        }
-
-        const th = document.createElement('th')
-        th.classList.add('mang--cell')
-        th.textContent = col.label || col.id
-        th.dataset.index = String(col.index)
+        const th = createTh(col)
 
         if (col.rowspan) {
           th.rowSpan = col.rowspan

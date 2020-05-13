@@ -10,11 +10,49 @@
       overflow: hidden;
       padding: 5px;
     }
+    .mang--dragging {
+      cursor: grabbing !important;
+      user-select: none;
+    }
 
     .mang__root > header,
     .mang__root > main {
       overflow: hidden;
       position: relative;
+    }
+
+    .mang__scroll-rail {
+      bottom: 0;
+      position: absolute;
+      right: 0;
+      z-index: 1;
+    }
+    .mang__scroll-rail__x {
+      height: 10px;
+      width: 100%;
+    }
+    .mang__scroll-rail__y {
+      height: 100%;
+      width: 10px;
+    }
+    .mang--scroll {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      cursor: grab;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .mang--dragging .mang--scroll {
+      cursor: grabbing;
+    }
+    .mang--scroll-x {
+      height: 10px;
+      min-width: 20px;
+    }
+    .mang--scroll-y {
+      min-height: 20px;
+      width: 10px;
     }
 
     .mang--frozen .mang__body {
@@ -94,9 +132,10 @@
             m = new Mang('#mango')
                 .size(500, 300)
                 .paginate('#mango-page')
-                .freeze(4)
+                .freeze(9)
                 .setColumns([
                     {id: 'rowNumber', type: 'ROW_NUMBER', align: 'CENTER', width: 40},
+                    {id: 'seq', width: 40},
                     {
                         id: 'name', type: 'TEXT', children: [
                             {
@@ -108,6 +147,7 @@
                             {id: 'middle', label: 'Last Name', align: 'LEFT', width: 130}
                         ]
                     },
+                    {id: 'seq', width: 40},
                     {id: 'age', type: 'NUMBER', surface: v => v < 21 ? 'younger' : 'elder', width: 80},
                     {id: 'birthday', type: 'DATE', pattern: 'dd. MMM.', width: 70},
                     {
@@ -124,7 +164,8 @@
                         ]
                     }
                 ])
-                .render(res)
+
+            m.render(res)
         })
 </script>
 </body>

@@ -1,24 +1,48 @@
 import renderHeader from './render/renderHeader'
 
-const appendTableAt = (
-  parent: Element,
-  table: HTMLTableElement,
-  type: string
-): void => {
+
+function appendTableAt(parent: Element, table: HTMLTableElement, type: string): void {
   table.classList.add(`mang__${type}`)
   parent.append(table)
 }
 
-const compositeElements = (
+function properlyFrozen(matrix: Column[][], shape: Shape): void {
+  const isProperlyFrozen = (): boolean => {
+    if (shape.frozen === 0) {
+      return true
+    }
+
+    for (let i = 0; i < matrix.length - 1; i++) {
+      if (matrix[i][shape.frozen].children && matrix[i][shape.frozen - 1].children) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  try {
+    while (!isProperlyFrozen()) {
+      shape.frozen++
+    }
+  } catch (e) {
+    shape.frozen = 0
+  }
+}
+
+function compositeElements(
   { root, head, body, apex, left, cage }: GridElement,
-  { frozen }: Shape
-): void => {
+  shape: Shape,
+  matrix: Column[][]
+): void {
   root.classList.add('mang__root')
 
   appendTableAt(cage.head, head, 'head')
   appendTableAt(cage.body, body, 'body')
 
-  if (frozen) {
+  if (shape.frozen) {
+    properlyFrozen(matrix, shape)
+
     appendTableAt(cage.apex, apex, 'apex')
     cage.apex.classList.add('mang__cage-apex')
     cage.head.prepend(cage.apex)
@@ -31,89 +55,26 @@ const compositeElements = (
   root.append(cage.head, cage.body)
 }
 
-const createHeader = ({ head, apex }: GridElement, { frozen }: Shape, matrix: Column[][]): void => {
-  renderHeader(head, matrix)
+function createColgroup({ body, head, left, apex }: GridElement, { columns }: Shape): void {
+  const colgroup = () => document.createElement('colgroup')
+  head.prepend(colgroup())
+  body.prepend(colgroup())
+  left.prepend(colgroup())
+  apex.prepend(colgroup())
 
-  if (frozen) {
-    renderHeader(apex, matrix, frozen)
-  }
-}
-
-const createFrozenWidthsByColgroup = (
-  { root, body, left, apex, cage }: GridElement,
-  shape: Shape,
-  colgroup: HTMLTableColElement,
-  totalWidth: number
-): void => {
-  const cageWidth = (shape.columns || [])
-    .filter((column, i) => !column.hide && i < shape.frozen)
-    .reduce((width, column) => width + (column.width || 0), 0)
-
-  const cageColgroup = document.createElement('colgroup')
-  const bodyColgroup = colgroup.cloneNode(true) as Element
-
-  bodyColgroup.querySelectorAll('col')
-    .forEach((col, i) => {
-      if (i < shape.frozen) {
-        cageColgroup.append(col)
-      }
-    })
-
-  shape.body.width = totalWidth - cageWidth
-
-  body.style.left = `${cageWidth}px`
-  body.style.width = `${shape.body.width}px`
-  body.prepend(bodyColgroup)
-
-  root.classList.add('mang--frozen')
-
-  apex.style.width = `${cageWidth}px`
-  apex.prepend(cageColgroup)
-
-  left.style.width = `${cageWidth}px`
-  left.prepend(cageColgroup.cloneNode(true))
-
-  cage.apex.style.width = `${cageWidth}px`
-  cage.left.style.width = `${cageWidth}px`
-}
-
-const createWidthsByColgroup = (element: GridElement, shape: Shape): void => {
-  const { head, body } = element
-  const { columns = [], frozen } = shape
-
-  const colgroup = document.createElement('colgroup')
-
-  columns.forEach((column, index) => {
-    const col = document.createElement('col')
-    col.classList.add('mang--col')
-    col.dataset.index = String(index)
-    col.style.width = column.hide ? '0' : `${column.width || 100}px`
-    colgroup.append(col)
+  const col = (): HTMLTableColElement => document.createElement('col')
+  columns.forEach(column => {
+    column.cols = [col(), col()]
   })
-
-  const totalWidth = columns.reduce((width, column) => width
-    + (column.hide ? 0 : column.width || 100), 0)
-
-  head.style.width = `${totalWidth}px`
-  head.prepend(colgroup)
-
-  if (frozen) {
-    createFrozenWidthsByColgroup(element, shape, colgroup, totalWidth)
-  } else {
-    shape.body.width = totalWidth
-
-    body.style.width = `${totalWidth}px`
-    body.prepend(colgroup.cloneNode(true))
-  }
 }
 
-const calculateColumnMatrix = (
+function calculateColumnMatrix(
   columns: Column[],
   matrix: Column[][],
   columnIndex: number = 0,
   rowIndex: number = 0,
   keys: string[] = []
-): number => {
+): number {
   columns.forEach(column => {
     if (!matrix[rowIndex]) {
       matrix[rowIndex] = []
@@ -139,7 +100,7 @@ const calculateColumnMatrix = (
   return columnIndex
 }
 
-const calculatedMatrix = (columns: Column[], shape: Shape): Column[][] => {
+function calculatedMatrix(columns: Column[], shape: Shape): Column[][] {
   const matrix: Column[][] = []
   const columnLength = calculateColumnMatrix(columns, matrix)
   const rowLength = matrix.length
@@ -201,14 +162,14 @@ function createRowTemplate(columns: Column[]): HTMLTableRowElement {
 
   columns
     .forEach(column => {
-      column.cell = createDataCellTemplate(column)
-      tr.append(column.cell)
+      column.cellTemplate = createDataCellTemplate(column)
+      tr.append(column.cellTemplate)
     })
 
   return tr
 }
 
-const buildRowTemplate = (element: GridElement, shape: Shape): void => {
+function buildRowTemplate(element: GridElement, shape: Shape): void {
   const { columns, row, frozen } = shape
 
   row.body = [
@@ -222,19 +183,70 @@ const buildRowTemplate = (element: GridElement, shape: Shape): void => {
   }
 }
 
+function createScrollbar({ scroll, cage }: GridElement) {
+  const railX = document.createElement('div')
+  const railY = document.createElement('div')
+
+  scroll.x.classList.add('mang--scroll', 'mang--scroll-x')
+  railX.classList.add('mang__scroll-rail', 'mang__scroll-rail__x')
+  railX.append(scroll.x)
+
+  scroll.y.classList.add('mang--scroll', 'mang--scroll-y')
+  railY.classList.add('mang__scroll-rail', 'mang__scroll-rail__y')
+  railY.append(scroll.y)
+
+  cage.body.append(railX)
+  cage.body.append(railY)
+}
+
+export function fitting(
+  { root, body, left, head, apex, cage }: GridElement,
+  shape: Shape
+): void {
+  if (shape.frozen > 0) {
+    root.classList.add('mang--frozen')
+  }
+
+  const leftWidth = (shape.columns || [])
+    .filter((column, i) => !column.hide && i < shape.frozen)
+    .reduce((width, column) => width + (column.width || 0), 0)
+
+  const totalWidth = shape.columns.reduce((width, column) => width
+    + (column.hide ? 0 : column.width), 0)
+
+  head.style.width = `${totalWidth}px`
+  shape.bodyWidth = totalWidth
+
+  body.style.width = `${totalWidth}px`
+
+
+  shape.bodyWidth = totalWidth - leftWidth
+
+  body.style.left = `${leftWidth}px`
+  body.style.width = `${shape.bodyWidth}px`
+  apex.style.width = `${leftWidth}px`
+  left.style.width = `${leftWidth}px`
+  cage.apex.style.width = `${leftWidth}px`
+  cage.left.style.width = `${leftWidth}px`
+
+  if (shape.height > 0) {
+    shape.bodyHeight = shape.height - head.offsetHeight
+    cage.body.style.height = `${shape.bodyHeight}px`
+  }
+}
+
 export default (element: GridElement, shape: Shape, columns: Column[]): void => {
   const matrix: Column[][] = calculatedMatrix(columns, shape)
 
-  compositeElements(element, shape)
+  compositeElements(element, shape, matrix)
 
-  createHeader(element, shape, matrix)
+  createColgroup(element, shape)
 
-  createWidthsByColgroup(element, shape)
+  renderHeader(element.head, matrix)
+
+  createScrollbar(element)
 
   buildRowTemplate(element, shape)
 
-  if (shape.height > 0) {
-    shape.body.height = shape.height - element.head.offsetHeight
-    element.cage.body.style.height = `${shape.body.height}px`
-  }
+  fitting(element, shape)
 }

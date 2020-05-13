@@ -1,19 +1,22 @@
 import initialize from './initialize'
 import renderBody from './render/renderBody'
+import renderBodyByWheel from './render/renderBodyByWheel'
 import registryEvent from './event/registry'
 
 class Mang {
   public static ids: string[] = []
 
+  public static ROW_HEIGHT = 30
+
   private readonly element: GridElement
 
   private shape: Shape = {
-    width: -1,
-    height: -1,
-    body: {
-      width: 0,
-      height: 0
-    },
+    width: 0,
+    height: 0,
+    bodyWidth: 0,
+    bodyHeight: 0,
+    leftWidth: 0,
+    totalWidth: 0,
     frozen: 0,
     columns: [],
     columnMap: {},
@@ -50,6 +53,10 @@ class Mang {
         body: document.createElement('main'),
         apex: document.createElement('div'),
         left: document.createElement('div'),
+      },
+      scroll: {
+        x: document.createElement('div'),
+        y: document.createElement('div')
       }
     }
   }
@@ -62,16 +69,22 @@ class Mang {
     return this
   }
 
-  render(data?: { [key: string]: any }[]): Mang {
-    if (data) {
-      this.setData(data)
+  render(renderData?: { [key: string]: any }[]): Mang {
+    if (renderData) {
+      this.setData(renderData)
     }
 
-    initialize(this.element, this.shape, this.columns)
+    const { element, shape, columns, data } = this
 
-    renderBody(this.element, this.shape, this.data)
+    initialize(element, shape, columns)
 
-    registryEvent(this.element, this.shape)
+    if (shape.height > 0) {
+      renderBodyByWheel(element, shape, data)
+    } else {
+      renderBody(element, shape, data)
+    }
+
+    registryEvent(element, shape)
 
     return this
   }
